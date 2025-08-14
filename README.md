@@ -1,6 +1,8 @@
 # 配置[**SourceTree**](https://www.sourcetreeapp.com/)脚本
 
-![image-20250726230655312](./assets/image-20250726230655312.png)
+<img src="./assets/image-20250726230655312.png" alt="image-20250726230655312" style="zoom:50%;" />
+
+<img src="./assets/image-20250814100342111.png" alt="image-20250814100342111" style="zoom:50%;" />
 
 * ⚠️ [**SourceTree**](https://www.sourcetreeapp.com/) 运行脚本的时候，**Shell**不会继承外部系统的**Shell**，从而丢失一些自定义配置。例：
 
@@ -54,6 +56,5 @@
     
     # 7) 打开 VSCode（继承以上 env）
     exec code -n .
-    
     ```
 
