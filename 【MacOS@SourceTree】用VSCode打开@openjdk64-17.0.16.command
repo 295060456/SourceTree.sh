@@ -1,10 +1,11 @@
 #!/bin/zsh
 set -euo pipefail
 
-info()  { print -P "ℹ️  %F{cyan}$*%f"; }
-ok()    { print -P "✅ %F{green}$*%f"; }
-warn()  { print -P "⚠️  %F{yellow}$*%f"; }
-err()   { print -P "❌ %F{red}$*%f" >&2; }
+# -------- 纯文本日志函数（无颜色/无 emoji/兼容非TTY） --------
+info() { echo "[INFO] $*"; }
+ok()   { echo "[OK]   $*"; }
+warn() { echo "[WARN] $*"; }
+err()  { echo "[ERR]  $*" >&2; }
 
 ensure_brew() {
   if command -v brew >/dev/null 2>&1; then
@@ -43,8 +44,10 @@ ensure_jdk17() {
     err "系统未安装 JDK 17；请先安装（Temurin 17 / Zulu 17 等）。"
     exit 1
   fi
+
   jenv add "$(/usr/libexec/java_home -v 17)" >/dev/null 2>&1 || true
   jenv rehash
+
   local pick_17
   pick_17="$(jenv versions --bare | grep -E '(^|[[:space:]])(.*17(\.|$).*)' | head -n1 || true)"
   [[ -z "${pick_17:-}" ]] && { err "jenv 中未发现 JDK 17。"; exit 1; }
@@ -55,6 +58,7 @@ ensure_jdk17() {
   export PATH="$JAVA_HOME/bin:$PATH"
 
   echo "$pick_17" > .java-version
+
   info "JENV_VERSION=$JENV_VERSION"
   info "JAVA_HOME=$JAVA_HOME"
   java -version
@@ -66,15 +70,21 @@ open_vscode() {
     ok "使用 VS Code CLI：code -n ${target}"
     exec code -n "${target}"
   fi
+
   local -a CANDIDATES=(
     "/Applications/Visual Studio Code.app"
     "$HOME/Applications/Visual Studio Code.app"
     "/Applications/Visual Studio Code - Insiders.app"
     "$HOME/Applications/Visual Studio Code - Exploration.app"
   )
+  local app
   for app in "${CANDIDATES[@]}"; do
-    [[ -d "$app" ]] && { warn "改用 GUI：$app"; exec open -a "$app" "${target}"; }
+    if [[ -d "$app" ]]; then
+      warn "未检测到 VS Code CLI，改用 GUI：$app"
+      exec open -a "$app" "${target}"
+    fi
   done
+
   warn "未发现 VS Code，打开官网…"
   exec open "https://code.visualstudio.com/"
 }
