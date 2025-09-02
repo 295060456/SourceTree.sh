@@ -126,50 +126,17 @@ exists() { command -v "$1" >/dev/null 2>&1; }
 
 has_yaml_key() { grep -qE "^[[:space:]]*$1[[:space:]]*:" pubspec.yaml; }
 
-# ============================== 新增：图标产物汇总 ==============================
+# ============================== 图标产物汇总 ==============================
 show_icon_summary() {
   echo "—— 图标产物汇总 ——"
 
-  # Android（同时检查 ic_launcher 与 launcher_icon 两个常见名）
-  local a_count
-  a_count=$(ls -1 android/app/src/main/res/mipmap-*/ic_launcher.* 2>/dev/null | wc -l | tr -d ' ')
-  local a2_count
-  a2_count=$(ls -1 android/app/src/main/res/mipmap-*/launcher_icon.* 2>/dev/null | wc -l | tr -d ' ')
   echo "Android:"
-  if (( a_count > 0 )); then
-    ls -lh android/app/src/main/res/mipmap-*/ic_launcher.* 2>/dev/null
-  fi
-  if (( a2_count > 0 )); then
-    ls -lh android/app/src/main/res/mipmap-*/launcher_icon.* 2>/dev/null
-  fi
-  if (( a_count + a2_count == 0 )); then
-    echo "（未找到 Android mipmap 图标产物）"
-  fi
-  # v26 自适应 xml（如果生成了）
-  if ls android/app/src/main/res/mipmap-anydpi-v26/ic_* 1>/dev/null 2>&1; then
-    ls -lh android/app/src/main/res/mipmap-anydpi-v26/ic_* 2>/dev/null
-  fi
+  ls -1 android/app/src/main/res/mipmap-*/ic_launcher.* 2>/dev/null || echo "（未找到 Android ic_launcher 图标）"
 
-  # iOS
-  local ios_dir="ios/Runner/Assets.xcassets/AppIcon.appiconset"
   echo ""
   echo "iOS:"
-  if [[ -d "$ios_dir" ]]; then
-    local ios_cnt
-    ios_cnt=$(ls -1 "$ios_dir"/*.png 2>/dev/null | wc -l | tr -d ' ')
-    if (( ios_cnt > 0 )); then
-      ls -lh "$ios_dir"/*.png 2>/dev/null
-    else
-      echo "（未找到 iOS PNG 产物）"
-    fi
-    if [[ -f "$ios_dir/Contents.json" ]]; then
-      echo "Contents.json ✅ 存在"
-    else
-      echo "Contents.json ⚠️ 缺失"
-    fi
-  else
-    echo "（未找到 $ios_dir 目录）"
-  fi
+  ls -lh ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png 2>/dev/null || echo "（未找到 iOS 图标 PNG）"
+
   echo "—— 结束 ——"
   echo ""
 }
