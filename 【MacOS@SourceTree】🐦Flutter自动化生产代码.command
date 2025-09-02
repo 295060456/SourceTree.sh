@@ -130,12 +130,12 @@ has_yaml_key() { grep -qE "^[[:space:]]*$1[[:space:]]*:" pubspec.yaml; }
 show_icon_summary() {
   echo "—— 图标产物汇总 ——"
 
-  echo "Android:"
-  ls -1 android/app/src/main/res/mipmap-*/ic_launcher.* 2>/dev/null || echo "（未找到 Android ic_launcher 图标）"
+  echo "【Android】👇"
+  ls -1 android/app/src/main/res/mipmap-*/ic_launcher.* || echo "（未找到 Android ic_launcher 图标）"
 
   echo ""
-  echo "iOS:"
-  ls -lh ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png 2>/dev/null || echo "（未找到 iOS 图标 PNG）"
+  echo "【iOS】👇"
+  ls -1 ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png 2>/dev/null || echo "（未找到 iOS 图标 PNG）"
 
   echo "—— 结束 ——"
   echo ""
